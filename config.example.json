@@ -1,0 +1,17 @@
+{
+	"database": {
+		"host": null,
+		"user": "root",
+		"password": null,
+		"database": "cs2340"
+	},
+	"databaseProd": {
+		"host": "127.0.0.1",
+		"user": "root",
+		"password": null,
+		"database": "cs2340"
+	},
+	"session": {
+		"secret": ""
+	}
+}
