@@ -45,7 +45,9 @@ app.use(session({
 }));
 
 var session = require('./controllers/session');
+var index   = require('./controllers/index');
 require("./routes.js")(app, {
+	index: index,
 	session: session
 });
 

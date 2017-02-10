@@ -1,10 +1,8 @@
 var auth = require('./helpers/authentication');
 var csrf = require('csurf');
 
-module.exports = function(app, controllers) {
+module.exports = function(app, c) {
 	app.use(csrf());
 
-	app.get('/', function(req, res) {
-		res.send(200);
-	})
+	app.get('/', c.index.index);
 }
