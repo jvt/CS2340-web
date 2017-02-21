@@ -34,17 +34,28 @@ module.exports.createSession = function(req, res) {
 						return res.status(500).json(response);
 					} else {
 						if (result) {
-							const response = {
-								'status': 'success',
-								'auth': true,
-								'messages':[],
-								'userData': {
-									'username': dbUser.attributes.username,
-									'role': dbUser.attributes.role,
-									'created_at': dbUser.attributes.created_at
-								}
-							};
-							return res.json(response);
+							if (dbUser.attributes.locked) {
+								const response = {
+									'status': 'success',
+									'auth': false,
+									'messages':[
+										'User account has been locked'
+									]
+								};
+								return res.json(response);
+							} else {
+								const response = {
+									'status': 'success',
+									'auth': true,
+									'messages':[],
+									'userData': {
+										'username': dbUser.attributes.username,
+										'role': dbUser.attributes.role,
+										'created_at': dbUser.attributes.created_at
+									}
+								};
+								return res.json(response);
+							}
 						} else {
 							const response = {
 								'status': 'success',
