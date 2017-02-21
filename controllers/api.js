@@ -17,6 +17,7 @@ module.exports.createSession = function(req, res) {
 	new User()
 		.query(function(qb) {
 			qb.where('username', req.body.username);
+			qb.limit(1);
 		})
 		.fetch()
 		.then(function(dbUser) {
@@ -27,7 +28,7 @@ module.exports.createSession = function(req, res) {
 						const response = {
 							'status': 'error',
 							'messages': [
-								'A server error occurred'
+								'An internal server error occurred'
 							]
 						};
 						return res.status(500).json(response);
@@ -64,6 +65,75 @@ module.exports.createSession = function(req, res) {
 					]
 				};
 				return res.json(response);
+			}
+		});
+}
+
+
+module.exports.createUser = function(req, res) {
+	if (!req.body.username || !req.body.password || !req.body.confirm_password) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'Missing required parameter'
+			]
+		};
+		return res.json(response);
+	}
+
+	if (req.body.password != req.body.confirm_password) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'Password\'s don\'t match'
+			]
+		};
+		return res.json(response);
+	}
+
+	let salt = bcrypt.genSaltSync();
+	let hash = bcrypt.hashSync(req.body.password, salt);
+
+	new User()
+		.query(function(qb) {
+			qb.where('username', req.body.username);
+			qb.limit(1);
+		})
+		.fetch()
+		.then(function(duplicate) {
+			if (duplicate) {
+				const response = {
+					'status': 'error',
+					'messages': [
+						'User already exists'
+					]
+				};
+				return res.json(response);
+			} else {
+				new User({
+					username: req.body.username,
+					password: hash
+				})
+				.save()
+				.then(function(dbUser) {
+					if (dbUser) {
+						const response = {
+							'status': 'success',
+							'messages': [
+								'User has been created'
+							]
+						};
+						return res.json(response);
+					} else {
+						const response = {
+							'status': 'error',
+							'messages': [
+								'An internal server error occurred'
+							]
+						};
+						return res.status(500).json(response);
+					}
+				});
 			}
 		});
 }
