@@ -1,3 +1,3 @@
-module.exports.index = function(req, res) {
-	return res.render('index', {title: 'CS2340'});
-}
+exports.index = require('./home');
+exports.api = require('./api');
+exports.session = require('./session');

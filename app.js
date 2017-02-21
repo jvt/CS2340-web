@@ -44,12 +44,8 @@ app.use(session({
 	})
 }));
 
-var session = require('./controllers/session');
-var index   = require('./controllers/index');
-require("./routes.js")(app, {
-	index: index,
-	session: session
-});
+let controllers = require('./controllers/');
+require("./routes.js")(app, controllers);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
