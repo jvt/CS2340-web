@@ -82,7 +82,7 @@ module.exports.createSession = function(req, res) {
 
 
 module.exports.createUser = function(req, res) {
-	console.log(req.body);
+	console.log(req);
 	if (!req.body.username || !req.body.password || !req.body.confirm_password) {
 		const response = {
 			'status': 'error',
