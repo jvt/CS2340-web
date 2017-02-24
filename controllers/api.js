@@ -102,6 +102,8 @@ module.exports.createUser = function(req, res) {
 		return res.json(response);
 	}
 
+	if (!req.body.role) req.body.role = 0; // Default to User
+
 	let salt = bcrypt.genSaltSync();
 	let hash = bcrypt.hashSync(req.body.password, salt);
 
@@ -123,7 +125,8 @@ module.exports.createUser = function(req, res) {
 			} else {
 				new User({
 					username: req.body.username,
-					password: hash
+					password: hash,
+					role: req.body.role
 				})
 				.save()
 				.then(function(dbUser) {
