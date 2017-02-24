@@ -92,6 +92,16 @@ module.exports.createUser = function(req, res) {
 		return res.json(response);
 	}
 
+	if (req.body.password.length < 7) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'Password must be at least 7 characters'
+			]
+		};
+		return res.json(response);
+	}
+
 	if (req.body.password != req.body.confirm_password) {
 		const response = {
 			'status': 'error',
