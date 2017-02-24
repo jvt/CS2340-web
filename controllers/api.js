@@ -96,7 +96,7 @@ module.exports.createUser = function(req, res) {
 		const response = {
 			'status': 'error',
 			'messages': [
-				'Password\'s don\'t match'
+				'Passwords do not match'
 			]
 		};
 		return res.json(response);
@@ -116,7 +116,7 @@ module.exports.createUser = function(req, res) {
 				const response = {
 					'status': 'error',
 					'messages': [
-						'User already exists'
+						'Username has already been used.'
 					]
 				};
 				return res.json(response);
