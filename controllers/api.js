@@ -133,9 +133,13 @@ module.exports.createUser = function(req, res) {
 				};
 				return res.json(response);
 			} else {
+				let tokenSalt = bcrypt.genSaltSync();
+				let token = bcrypt.hashSync(req.body.username + hash, tokenSalt);
+				token = token.replace(/\W/g, '');
 				new User({
 					username: req.body.username,
 					password: hash,
+					token: token,
 					role: req.body.role
 				})
 				.save()
@@ -145,7 +149,11 @@ module.exports.createUser = function(req, res) {
 							'status': 'success',
 							'messages': [
 								'User has been created'
-							]
+							],
+							'data': {
+								'id': dbUser.attributes.id,
+								'authToken': token
+							}
 						};
 						return res.json(response);
 					} else {
