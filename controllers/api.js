@@ -215,5 +215,30 @@ module.exports.getUser = function(req, res) {
 }
 
 module.exports.updateUser = function(req, res) {
-	
+	var uid = req.body.userid;
+	if (!uid) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'User not found'
+			]
+		};
+		return res.status(404).json(response);
+	}
+
+	new User({
+		id: uid
+	}).fetch()
+	.then(function(u) {
+		u.attributes.username = req.body.username || u.attributes.username;
+		u.attributes.role = req.body.role || u.attributes.role;
+		u.attributes.homeaddress = req.body.homeAddress || u.attributes.homeaddress;
+		u.attributes.title = req.body.title || u.attributes.title;
+		u.save();
+		const response = {
+			'status': 'success',
+			'messages': []
+		};
+		return res.status(200).json(response);
+	});
 }
