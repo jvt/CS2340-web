@@ -49,6 +49,8 @@ module.exports.createSession = function(req, res) {
 									'auth': true,
 									'messages':[],
 									'userData': {
+										'id': dbUser.attributes.id,
+										'authToken': dbUser.attributes.token,
 										'username': dbUser.attributes.username,
 										'role': dbUser.attributes.role,
 										'created_at': dbUser.attributes.created_at
