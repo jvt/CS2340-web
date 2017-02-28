@@ -161,3 +161,49 @@ module.exports.createUser = function(req, res) {
 			}
 		});
 }
+
+module.exports.getUser = function(req, res) {
+	if (!req.params.id) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'An ID parameter is required'
+			]
+		};
+		return res.status(500).json(response);
+	}
+
+	new User({
+		id: req.params.id
+	}).fetch()
+	.then(function(dbRecord) {
+		if (!dbRecord || !dbRecord.attributes) {
+			const response = {
+				'status': 'error',
+				'messages': [
+					'User not found'
+				]
+			};
+			return res.status(404).json(response);
+		}
+
+		const removeFromResponse = ['password', 'token', 'resetToken', 'resetExpiration'];
+
+		let data = dbRecord.attributes;
+
+		for (let removal in removeFromResponse) {
+			delete data[removeFromResponse[removal]];
+		}
+
+		const response = {
+			'status': 'success',
+			'messages': [],
+			'userData': data
+		};
+		return res.status(200).json(response);
+	});
+}
+
+module.exports.updateUser = function(req, res) {
+	
+}
