@@ -267,6 +267,11 @@ module.exports.updateUser = function(req, res) {
 	});
 }
 
+/**
+ * GET /api/reports - Load all reports from the database
+ * @param  {Object} req Request Object
+ * @param  {Object} res Response Object
+ */
 module.exports.loadReports = function(req, res) {
 	new Report()
 		.fetchAll()
@@ -290,6 +295,11 @@ module.exports.loadReports = function(req, res) {
 		});
 }
 
+/**
+ * POST /api/reports - Store a new report into the database
+ * @param  {Object} req Request Object
+ * @param  {Object} res Response Object
+ */
 module.exports.saveReport = function(req, res) {
 	let messages = [];
 	if (!req.body.userID) {
