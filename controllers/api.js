@@ -276,7 +276,7 @@ module.exports.loadReports = function(req, res) {
 					id: item.attributes.userID
 				}).fetch()
 				.then((submitter) => {
-					item.attributes.submitter = submitter.attribute.name || 'Unknown';
+					item.attributes.submitter = submitter.attributes.username || 'Unknown';
 					return cb(null, item.attributes);
 				});
 			}, (err, results) => {
