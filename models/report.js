@@ -1,12 +1,12 @@
 const bookshelf = require('bookshelf').DB;
-let Report = require('./report').model;
+let User = require('./user').model;
 
 exports.model = bookshelf.Model.extend({
-  tableName: 'users',
+  tableName: 'reports',
   hasTimestamps: true,
-  reports: function()
+  user: function()
   {
-  	return this.hasMany(Report);
+  	return this.hasOne(User);
   }
 });
 
