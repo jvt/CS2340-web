@@ -272,7 +272,13 @@ module.exports.loadReports = function(req, res) {
 		.fetchAll()
 		.then(reports => {
 			async.map(reports.models, (item, cb) => {
-				cb(null, item.attributes);
+				new User({
+					id: item.attributes.userID
+				}).fetch()
+				.then((submitter) => {
+					item.attributes.submitter = submitter.attribute.name || 'Unknown';
+					return cb(null, item.attributes);
+				});
 			}, (err, results) => {
 				const response = {
 					'status': 'success',
