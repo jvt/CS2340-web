@@ -285,5 +285,65 @@ module.exports.loadReports = function(req, res) {
 }
 
 module.exports.saveReport = function(req, res) {
+	let messages = [];
+	if (!req.body.userID) {
+		messages.push('"userID" is a required field');
+	}
+	if (!req.body.address) {
+		messages.push('"address" is a required field');
+	}
+	if (!req.body.type) {
+		messages.push('"type" is a required field');
+	}
+	if (!req.body.condition) {
+		messages.push('"condition" is a required field');
+	}
 
+	if (messages.length !== 0) {
+		const response = {
+			'status': 'error',
+			'messages': messages
+		};
+		return res.status(500).json(response);
+	}
+
+	new User({
+		id: req.body.userID
+	}).fetch()
+	.then(function(userCheck) {
+		if (!userCheck) {
+			const response = {
+				'status': 'error',
+				'messages': [
+					'No user with that ID exists'
+				]
+			};
+			return res.status(500).json(response);
+		}
+		
+		new Report({
+			userID: req.body.userID,
+			address: req.body.address,
+			type: req.body.type,
+			condition: req.body.condition
+		}).save()
+		.then(function(result) {
+			if (result) {
+				const response = {
+					'status': 'success',
+					'messages': [],
+					'report': result.attributes
+				};
+				return res.status(200).json(response);
+			} else {
+				const response = {
+					'status': 'error',
+					'messages': [
+						'An error occurred saving that report'
+					]
+				};
+				return res.status(500).json(response);
+			}
+		});
+	});
 }
