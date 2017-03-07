@@ -2,7 +2,14 @@ const async = require('async');
 const bcrypt = require('bcrypt');
 
 const User = require('../models/user').model;
+const Report = require('../models/report').model;
 
+/**
+ * Creates a login session and responds with the user's data & API token
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ * @return {null}
+ */
 module.exports.createSession = function(req, res) {
 	if (!req.body.username || !req.body.password) {
 		const response = {
@@ -82,7 +89,12 @@ module.exports.createSession = function(req, res) {
 		});
 }
 
-
+/**
+ * Creates a new user in the database
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ * @return {null}
+ */
 module.exports.createUser = function(req, res) {
 	if (!req.body.username || !req.body.password || !req.body.confirm_password) {
 		const response = {
@@ -172,6 +184,12 @@ module.exports.createUser = function(req, res) {
 		});
 }
 
+/**
+ * Returns user data from the database
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ * @return {null}
+ */
 module.exports.getUser = function(req, res) {
 	if (!req.params.id) {
 		const response = {
@@ -214,6 +232,12 @@ module.exports.getUser = function(req, res) {
 	});
 }
 
+/**
+ * Updates the user object in the database
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ * @return {null}
+ */
 module.exports.updateUser = function(req, res) {
 	var uid = req.body.userid;
 	if (!uid) {
@@ -241,4 +265,25 @@ module.exports.updateUser = function(req, res) {
 		};
 		return res.status(200).json(response);
 	});
+}
+
+module.exports.loadReports = function(req, res) {
+	new Report()
+		.fetchAll()
+		.then(reports => {
+			async.map(reports.models, (item, cb) => {
+				cb(null, item.attributes);
+			}, (err, results) => {
+				const response = {
+					'status': 'success',
+					'messages': [],
+					'reports': results
+				};
+				return res.status(200).json(response);
+			});
+		});
+}
+
+module.exports.saveReport = function(req, res) {
+
 }
