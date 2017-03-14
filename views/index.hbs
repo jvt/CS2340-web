@@ -14,6 +14,11 @@
 							center: loc,
 							zoom: 12
 						});
+
+						map.addListener('dragend', function() {
+							loadReports();
+						});
+
 						if (navigator.geolocation) {
 							navigator.geolocation.getCurrentPosition(function(position) {
 								var pos = {
@@ -35,7 +40,31 @@
 					}
 
 					function loadReports() {
-
+						var queryParams = '?lat=' + loc.lat + '&long=' + loc.lng;
+						$.ajax({
+							url: '/api/reports/location' + queryParams,
+							success: function(body) {
+								if (body.status === 'success') {
+									for (var i = 0; i < body.reports.length; i++) {
+										var report = body.reports[i];
+										new google.maps.Marker({
+											position: {
+												lat: Number(report.latitude),
+												lng: Number(report.longitude)
+											},
+											map: map
+										});
+									}
+								} else {
+									console.error('An unexpected error has occurred loading reports');
+									alert('An unexpected error has occurred loading reports');
+								}
+							},
+							error: function(body) {
+								console.error(body);
+								alert('An unexpected error has occurred loading reports');
+							}
+						});
 					}
 				</script>
 				<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1nBw64laQoFbrEcjNvm-mLcSCZtSi2BI&callback=initMap" async defer></script>
