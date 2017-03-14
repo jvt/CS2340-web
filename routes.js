@@ -13,9 +13,9 @@ module.exports = function(app, c) {
 
 	app.use(csrf());
 
-	app.get('/', c.index.index);
+	app.get('/', [auth.isAuthenticated], c.index.index);
 
-	app.get('/login', c.session.login);
-	app.post('/login', c.session.performLogin);
+	app.get('/login', [auth.isNotAuthenticated], c.session.login);
+	app.post('/login', [auth.isNotAuthenticated], c.session.performLogin);
 	app.get('/logout', c.session.logout);
 }
