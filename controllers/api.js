@@ -337,7 +337,6 @@ module.exports.loadReportsLocation = function(req, res) {
 		.then(reports => {
 			if (reports) {
 				async.map(reports.models, (item, cb) => {
-					console.log(item);
 					return cb(null, item.attributes);
 				}, (err, results) => {
 					const response = {
