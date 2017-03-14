@@ -405,7 +405,7 @@ module.exports.saveReport = function(req, res) {
 		
 		new Report({
 			userID: req.body.userID,
-			latitude: req.body.latidude,
+			latitude: req.body.latitude,
 			longitude: req.body.longitude,
 			type: req.body.type,
 			condition: req.body.condition
