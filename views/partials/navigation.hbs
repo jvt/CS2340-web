@@ -2,7 +2,11 @@
 	<div class="nav-wrapper">
 		<a href="/" class="brand-logo">Water</a>
 		<ul id="nav-mobile" class="right hide-on-med-and-down">
+			{{#unless user}}
 			<li><a href="/login">Login</a></li>
+			{{ else }}
+			<li><a href="/logout">Logout</a></li>
+			{{/unless}}
 		</ul>
 	</div>
 </nav>
