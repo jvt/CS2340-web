@@ -51,6 +51,6 @@ module.exports.performLogin = function(req, res) {
 }
 
 module.exports.logout = function(req, res) {
-	req.session.desotry();
+	req.session.destroy();
 	return res.redirect('/');
 }
