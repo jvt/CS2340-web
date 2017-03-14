@@ -2,7 +2,8 @@ const User = require('../models/user').model;
 
 module.exports.login = function(req, res) {
 	return res.render('session/login', {
-		title: 'Login'
+		title: 'Login',
+		_csrf: req.csrfToken()
 	});
 }
 
