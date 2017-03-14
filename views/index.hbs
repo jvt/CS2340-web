@@ -54,6 +54,7 @@
 											},
 											map: map
 										});
+										generateReportHTML(body.reports);
 									}
 								} else {
 									console.error('An unexpected error has occurred loading reports');
@@ -66,6 +67,10 @@
 							}
 						});
 					}
+
+					function generateReportHTML(reports) {
+						$('.card-content .reportsContainer > .preloader-wrapper').hide();
+					}
 				</script>
 				<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1nBw64laQoFbrEcjNvm-mLcSCZtSi2BI&callback=initMap" async defer></script>
 			</div>
@@ -77,7 +82,7 @@
 		<div class="card white">
 			<div class="card-content blue-text">
 				<span class="card-title blue-text">Water Reports</span>
-				<div class="row center-align">
+				<div class="row center-align reportsContainer">
 					<div class="preloader-wrapper small active">
 						<div class="spinner-layer spinner-blue-only">
 							<div class="circle-clipper left">
