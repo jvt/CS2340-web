@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var flash = require('express-flash');
 var nconf = require('nconf');
 var hbs = require('hbs');
 var bookshelf = require('bookshelf');
@@ -45,6 +46,8 @@ app.use(session({
 		ttl: 3600
 	})
 }));
+
+app.use(flash());
 
 let controllers = require('./controllers/');
 require("./routes.js")(app, controllers);
