@@ -14,4 +14,8 @@ module.exports = function(app, c) {
 	app.use(csrf());
 
 	app.get('/', c.index.index);
+
+	app.get('/login', c.session.login);
+	app.post('/login', c.session.performLogin);
+	app.get('/logout', c.session.logout);
 }
