@@ -368,8 +368,11 @@ module.exports.saveReport = function(req, res) {
 	if (!req.body.userID) {
 		messages.push('"userID" is a required field');
 	}
-	if (!req.body.address) {
-		messages.push('"address" is a required field');
+	if (!req.body.latitude) {
+		messages.push('"latitude" is a required field');
+	}
+	if (!req.body.longitude) {
+		messages.push('"longitude" is a required field');
 	}
 	if (!req.body.type) {
 		messages.push('"type" is a required field');
@@ -402,7 +405,8 @@ module.exports.saveReport = function(req, res) {
 		
 		new Report({
 			userID: req.body.userID,
-			address: req.body.address,
+			latitude: req.body.latidude,
+			longitude: req.body.longitude,
 			type: req.body.type,
 			condition: req.body.condition
 		}).save()
