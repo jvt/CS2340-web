@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user').model;
 const Report = require('../models/report').model;
 
+const knex = require('knex');
+
 /**
  * Creates a login session and responds with the user's data & API token
  * @param  {Object} req Request object
@@ -292,6 +294,67 @@ module.exports.loadReports = function(req, res) {
 				};
 				return res.status(200).json(response);
 			});
+		});
+}
+
+/**
+ * GET /api/reports/location - Load reports within a radius
+ * @param  {Object} req Request Object
+ * @param  {Object} res Response Object
+ */
+module.exports.loadReportsLocation = function(req, res) {
+	if (!req.query.lat) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'Missing "lat" query parameter'
+			]
+		};
+		return res.status(500).json(response);
+	}
+
+	if (!req.query.long) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'Missing "long" query parameter'
+			]
+		};
+		return res.status(500).json(response);
+	}
+
+	req.query.long = Number(req.query.long);
+	req.query.lat = Number(req.query.lat);
+
+	const raw = '( 6371 * acos( cos( radians(' + req.query.lat + ') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(' + req.query.long + ')) + sin(radians(' + req.query.lat + ')) * sin(radians(latitude)))) AS distance';
+
+	new Report()
+		.query(qb => {
+			qb.column(['userID', 'latitude', 'longitude', 'type', 'condition', 'created_at', 'updated_at', knex.raw(raw)]);
+			qb.having('distance', '<', 25);
+		})
+		.fetchAll()
+		.then(reports => {
+			if (reports) {
+				async.map(reports.models, (item, cb) => {
+					console.log(item);
+					return cb(null, item.attributes);
+				}, (err, results) => {
+					const response = {
+						'status': 'success',
+						'messages': [],
+						'reports': results
+					};
+					return res.status(200).json(response);
+				});
+			} else {
+				const response = {
+					'status': 'success',
+					'messages': [],
+					'reports': []
+				};
+				return res.status(200).json(response);
+			}
 		});
 }
 
