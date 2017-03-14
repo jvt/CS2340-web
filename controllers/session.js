@@ -1,4 +1,5 @@
 const User = require('../models/user').model;
+const bcrypt = require('bcrypt');
 
 module.exports.login = function(req, res) {
 	return res.render('session/login', {
@@ -27,7 +28,21 @@ module.exports.performLogin = function(req, res) {
 		.fetch()
 		.then(users => {
 			if (users) {
-				
+				let password = users.attributes.password;
+				bcrypt.compare(req.body.password, password, function(error, result) {
+					if (error) {
+						req.flash('error', 'An unexpected system error has occurred.');
+						return res.redirect('back');
+					}
+					if (!result) {
+						req.flash('error', incorrectMessage);
+						return res.redirect('back');
+					} else {
+						req.session.user = users.attributes;
+						req.session.save();
+						return res.redirect('/');
+					}
+				});
 			} else {
 				req.flash('error', incorrectMessage);
 				return res.redirect('back');
