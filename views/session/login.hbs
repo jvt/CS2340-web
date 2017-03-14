@@ -1,1 +1,27 @@
-{{>navigation}}
+<div class="row">
+	<div class="col s12 m6 offset-m3">
+		<div class="card white">
+			<div class="card-content center-align">
+			<span class="card-title blue-text center-align">Login</span>
+				<form action="/login" method="post">
+				<input type="hidden" name="_csrf" value="{{_csrf}}">
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="username" name="username" type="text" class="validate">
+							<label for="username">Username</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="password" name="password" type="password" class="validate">
+							<label for="password">Password</label>
+						</div>
+					</div>
+					<div class="row">
+						<button class="btn waves-effect waves-light blue" type="submit">Go</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
