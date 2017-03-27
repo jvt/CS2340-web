@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 
 const User = require('../models/user').model;
 const Report = require('../models/report').model;
+const Quality = require('../models/quality').model;
 
 const knex = require('knex');
 
@@ -284,7 +285,21 @@ module.exports.loadReports = function(req, res) {
 				}).fetch()
 				.then((submitter) => {
 					item.attributes.submitter = submitter.attributes.username || 'Unknown';
-					return cb(null, item.attributes);
+					new Quality()
+						.query(qb => {
+							qb.where('report', item.attributes.id);
+							qb.orderBy('created_at', 'DESC');
+							qb.limit(1);
+						})
+						.fetch()
+						.then(quality => {
+							if (quality) {
+								item.attributes.condition = quality.attributes.condition;
+							} else {
+								item.attributes.condition = 'Unknown';
+							}
+							return cb(null, item.attributes);
+						});
 				});
 			}, (err, results) => {
 				const response = {
@@ -330,7 +345,7 @@ module.exports.loadReportsLocation = function(req, res) {
 
 	new Report()
 		.query(qb => {
-			qb.column(['userID', 'latitude', 'longitude', 'type', 'condition', 'created_at', 'updated_at', knex.raw(raw)]);
+			qb.column(['id', 'userID', 'latitude', 'longitude', 'type', 'created_at', 'updated_at', knex.raw(raw)]);
 			qb.having('distance', '<', 25);
 		})
 		.fetchAll()
@@ -339,12 +354,30 @@ module.exports.loadReportsLocation = function(req, res) {
 				async.map(reports.models, (item, cb) => {
 					return cb(null, item.attributes);
 				}, (err, results) => {
-					const response = {
-						'status': 'success',
-						'messages': [],
-						'reports': results
-					};
-					return res.status(200).json(response);
+					async.map(results, (item, cb) => {
+						new Quality()
+							.query(qb => {
+								qb.where('report', item.id);
+								qb.orderBy('created_at', 'DESC');
+								qb.limit(1);
+							})
+							.fetch()
+							.then(condition => {
+								if (condition) {
+									item.condition = condition.attributes.condition;
+								} else {
+									item.condition = 'Unknown';
+								}
+								return cb(null, item);
+							});
+					}, (error, fin) => {
+						const response = {
+							'status': 'success',
+							'messages': [],
+							'reports': fin
+						};
+						return res.status(200).json(response);
+					});
 				});
 			} else {
 				const response = {
@@ -406,17 +439,23 @@ module.exports.saveReport = function(req, res) {
 			userID: req.body.userID,
 			latitude: req.body.latitude,
 			longitude: req.body.longitude,
-			type: req.body.type,
-			condition: req.body.condition
+			type: req.body.type
 		}).save()
 		.then(function(result) {
 			if (result) {
-				const response = {
-					'status': 'success',
-					'messages': [],
-					'report': result.attributes
-				};
-				return res.status(200).json(response);
+				new Quality({
+					report: result.attributes.id,
+					condition: req.body.condition
+				}).save()
+				.then(function(qualitySaved) {
+					result.attributes.condition = req.body.condition;
+					const response = {
+						'status': 'success',
+						'messages': [],
+						'report': result.attributes
+					};
+					return res.status(200).json(response);	
+				})
 			} else {
 				const response = {
 					'status': 'error',
@@ -428,4 +467,23 @@ module.exports.saveReport = function(req, res) {
 			}
 		});
 	});
+}
+
+/**
+ * Save a new quality report into the database
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ */
+module.exports.saveQualityReport = function(req, res) {
+	if (!req.params.id) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'An ID parameter is required'
+			]
+		};
+		return res.status(500).json(response);
+	}
+
+
 }
