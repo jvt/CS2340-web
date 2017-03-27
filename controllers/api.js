@@ -485,5 +485,53 @@ module.exports.saveQualityReport = function(req, res) {
 		return res.status(500).json(response);
 	}
 
+	if (!req.body.condition) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'"condition" is a required body parameter'
+			]
+		};
+		return res.status(500).json(response);
+	}
 
+	new Report({
+		id: req.params.id
+	})
+	.fetch()
+	.then(dbCheck => {
+		if (dbCheck) {
+
+			new Quality({
+				report: req.params.id,
+				condition: req.body.condition
+			}).save()
+			.then(condition => {
+				if (condition) {
+					const response = {
+						'status': 'success',
+						'messages': [],
+						'condition': req.body.condition
+					};
+					return res.status(200).json(response);	
+				} else {
+					const response = {
+						'status': 'error',
+						'messages': [
+							'An unexpected system error has occurred'
+						]
+					};
+					return res.status(500).json(response);
+				}
+			});
+		} else {
+			const response = {
+				'status': 'error',
+				'messages': [
+					'That report does not exist'
+				]
+			};
+			return res.status(404).json(response);
+		}
+	});
 }
