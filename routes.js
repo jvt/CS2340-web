@@ -8,6 +8,7 @@ module.exports = function(app, c) {
 	app.get('/api/reports/location', c.api.loadReportsLocation);
 	app.post('/api/reports', c.api.saveReport);
 	app.post('/api/reports/:id/quality', c.api.saveQualityReport);
+	app.get('/api/reports/:id/quality', c.api.getQualityReports);
 	app.get('/api/user/:id', c.api.getUser);
 	app.post('/api/user', c.api.createUser);
 	app.post('/api/user/update', c.api.updateUser);

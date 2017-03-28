@@ -535,3 +535,34 @@ module.exports.saveQualityReport = function(req, res) {
 		}
 	});
 }
+
+module.exports.getQualityReports = function(req, res) {
+	if (!req.params.id) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'An ID parameter is required'
+			]
+		};
+		return res.status(500).json(response);
+	}
+
+	new Quality()
+		.query(qb => {
+			qb.where('report', req.params.id);
+			qb.orderBy('created_at', 'DESC');
+		})
+		.fetchAll()
+		.then(conditions => {
+			async.map(conditions.models, (elem, cb) => {
+				return cb(null, elem.attributes);
+			}, (err, result) => {
+				const response = {
+					'status': 'success',
+					'messages': [],
+					'conditions': result
+				};
+				return res.status(200).json(response);
+			});
+		});
+}
