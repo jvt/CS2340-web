@@ -18,8 +18,8 @@ module.exports = function(app, c) {
 	app.get('/', [auth.isAuthenticated], c.index.index);
 
 	app.get('/login', [auth.isNotAuthenticated], c.session.login);
-	// app.get('/register', [auth.isNotAuthenticated], c.session.register);
+	app.get('/register', [auth.isNotAuthenticated], c.session.register);
 	app.post('/login', [auth.isNotAuthenticated], c.session.performLogin);
-	// app.post('/register', [auth.isNotAuthenticated], c.session.performRegister);
+	app.post('/register', [auth.isNotAuthenticated], c.session.performRegister);
 	app.get('/logout', c.session.logout);
 }
