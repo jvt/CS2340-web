@@ -1,0 +1,44 @@
+<div class="row">
+	<div class="col s12 m6 offset-m3">
+		<div class="card white">
+			<div class="card-content center-align">
+				<span class="card-title blue-text center-align">Create an Account</span>
+				<form action="/register" method="post">
+					<input type="hidden" name="_csrf" value="{{_csrf}}">
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="username" name="username" type="text" class="validate">
+							<label for="username">Username</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="password" name="password" type="password" class="validate">
+							<label for="password">Password</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="confirm_password" name="confirm_password" type="password" class="validate">
+							<label for="confirm_password">Confirm Password</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<select name="role" class="browser-default">
+								<option value="" disabled selected>Choose your role</option>
+								<option value="0">User</option>
+								<option value="1">Worker</option>
+								<option value="2">Manager</option>
+								<option value="3">Admin</option>
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<button class="btn waves-effect waves-light blue" type="submit">Go</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
