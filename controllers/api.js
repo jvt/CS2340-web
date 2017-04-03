@@ -613,7 +613,7 @@ module.exports.getQualityHistory = function(req, res) {
 						return res.status(200).json(response);
 					}
 
-					const conditionCodes = {'clean': 3, 'treatable-muddy': 2, 'treatable-clear': 1, 'waste': 0};
+					const conditionCodes = {'potable': 3, 'treatable-muddy': 2, 'treatable-clear': 1, 'waste': 0};
 
 					async.map(reports.models, (item, cb) => {
 						let obj = {
