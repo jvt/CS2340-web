@@ -566,3 +566,69 @@ module.exports.getQualityReports = function(req, res) {
 			});
 		});
 }
+
+module.exports.getQualityHistory = function(req, res) {
+	if (!req.params.id) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'An ID parameter is required'
+			]
+		};
+		return res.status(500).json(response);
+	}
+
+	new Report()
+		.query(qb => {
+			qb.where('id', req.params.id);
+			qb.limit(1);
+		})
+		.fetch()
+		.then(reportCheck => {
+			if (!reportCheck) {
+				const response = {
+					'status': 'error',
+					'messages': [
+						'Report with that ID does not exist'
+					]
+				};
+				return res.status(500).json(response);
+			}
+
+			new Quality()
+				.query(qb => {
+					qb.where('report', req.params.id);
+					qb.orderBy('created_at', 'DESC');
+				})
+				.fetchAll()
+				.then(reports => {
+					if (!reports) {
+						const response = {
+							'status': 'success',
+							'messages': [
+								'No water reports have been recorded '
+							],
+							'reports': []
+						};
+						return res.status(200).json(response);
+					}
+
+					const conditionCodes = {'clean': 3, 'treatable-muddy': 2, 'treatable-clear': 1, 'waste': 0};
+
+					async.map(reports.models, (item, cb) => {
+						let obj = {
+							'condition': item.attributes.condition,
+							'conditionCode': conditionCodes[item.attributes.condition.toLowerCase()],
+							'date': item.attributes.created_at
+						};
+						return cb(null, obj);
+					}, (err, results) => {
+						const response = {
+							'status': 'success',
+							'reports': results
+						};
+						return res.status(200).json(response);
+					});
+				});
+		})
+}
