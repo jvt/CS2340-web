@@ -9,6 +9,7 @@ module.exports = function(app, c) {
 	app.post('/api/reports', c.api.saveReport);
 	app.post('/api/reports/:id/quality', c.api.saveQualityReport);
 	app.get('/api/reports/:id/quality', c.api.getQualityReports);
+	app.get('/api/reports/:id/history', c.api.getQualityHistory);
 	app.get('/api/user/:id', c.api.getUser);
 	app.post('/api/user', c.api.createUser);
 	app.post('/api/user/update', c.api.updateUser);
