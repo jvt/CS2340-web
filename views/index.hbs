@@ -70,6 +70,23 @@
 
 					function generateReportHTML(reports) {
 						$('.card-content .reportsContainer > .preloader-wrapper').hide();
+						$('.card-content .reportsContainer > .data-container').show();
+						let $body = $('.card-content .reportsContainer > .data-container table tbody');
+						$body.html('');
+						for (var i = 0; i < reports.length; i++) {
+							var report = reports[i];
+							var row = '<tr class="clickable-row" data-href="/reports/[[id]]/"><td>[[id]]</td><td>[[type]]</td><td>[[condition]]</td><td>[[latitude]]</td><td>[[longitude]]</td></tr>';
+							row = row.replace('[[id]]', report.id);
+							row = row.replace('[[id]]', report.id);
+							row = row.replace('[[type]]', report.type);
+							row = row.replace('[[condition]]', report.condition);
+							row = row.replace('[[latitude]]', report.latitude);
+							row = row.replace('[[longitude]]', report.longitude);
+							$body.append(row);
+						}
+						$('.clickable-row').on('click', function() {
+							window.location = $(this).data('href');
+						});
 					}
 				</script>
 				<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1nBw64laQoFbrEcjNvm-mLcSCZtSi2BI&callback=initMap" async defer></script>
@@ -87,10 +104,28 @@
 						<div class="spinner-layer spinner-blue-only">
 							<div class="circle-clipper left">
 								<div class="circle"></div>
-							</div><div class="gap-patch">
-							<div class="circle"></div>
-						</div><div class="circle-clipper right">
-						<div class="circle"></div>
+							</div>
+							<div class="gap-patch">
+								<div class="circle"></div>
+							</div>
+							<div class="circle-clipper right">
+								<div class="circle"></div>
+							</div>
+						</div>
+					</div>
+					<div class="data-container" style="display:none;padding:0 20px;">
+						<table class="highlight">
+							<thead>
+								<tr class="grey-text text-darken-2">
+									<th>ID</th>
+									<th>Type</th>
+									<th>Condition</th>
+									<th>Longitude</th>
+									<th>Latitude</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
 					</div>
 				</div>
 			</div>
