@@ -294,9 +294,13 @@ module.exports.loadReports = function(req, res) {
 						.fetch()
 						.then(quality => {
 							if (quality) {
-								item.attributes.condition = quality.attributes.condition;
+								item.virusPPM = quality.attributes.virusPPM;
+								item.contaminantPPM = quality.attributes.contaminantPPM;
+								item.condition = quality.attributes.condition;
 							} else {
-								item.attributes.condition = 'Unknown';
+								item.virusPPM = 'Unknown';
+								item.contaminantPPM = 'Unknown';
+								item.condition = 'Unknown';
 							}
 							return cb(null, item.attributes);
 						});
@@ -364,8 +368,12 @@ module.exports.loadReportsLocation = function(req, res) {
 							.fetch()
 							.then(condition => {
 								if (condition) {
+									item.virusPPM = condition.attributes.virusPPM;
+									item.contaminantPPM = condition.attributes.contaminantPPM;
 									item.condition = condition.attributes.condition;
 								} else {
+									item.virusPPM = 'Unknown';
+									item.contaminantPPM = 'Unknown';
 									item.condition = 'Unknown';
 								}
 								return cb(null, item);
@@ -412,6 +420,12 @@ module.exports.saveReport = function(req, res) {
 	if (!req.body.condition) {
 		messages.push('"condition" is a required field');
 	}
+	if (!req.body.contaminantPPM) {
+		messages.push('"Contaminant PPM" is a required field');
+	}
+	if (!req.body.virusPPM) {
+		messages.push('"Virus PPM" is a required field');
+	}
 
 	if (messages.length !== 0) {
 		const response = {
@@ -445,7 +459,9 @@ module.exports.saveReport = function(req, res) {
 			if (result) {
 				new Quality({
 					report: result.attributes.id,
-					condition: req.body.condition
+					condition: req.body.condition,
+					virusPPM: req.body.virusPPM,
+					contaminantPPM: req.body.contaminantPPM
 				}).save()
 				.then(function(qualitySaved) {
 					result.attributes.condition = req.body.condition;
@@ -495,6 +511,26 @@ module.exports.saveQualityReport = function(req, res) {
 		return res.status(500).json(response);
 	}
 
+	if (!req.body.contaminantPPM) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'"Contaminant PPM" is a required body parameter'
+			]
+		};
+		return res.status(500).json(response);
+	}
+
+	if (!req.body.virusPPM) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'"Virus PPM" is a required body parameter'
+			]
+		};
+		return res.status(500).json(response);
+	}
+
 	new Report({
 		id: req.params.id
 	})
@@ -504,14 +540,18 @@ module.exports.saveQualityReport = function(req, res) {
 
 			new Quality({
 				report: req.params.id,
-				condition: req.body.condition
+				condition: req.body.condition,
+				contaminantPPM: req.body.contaminantPPM,
+				virusPPM: req.body.virusPPM
 			}).save()
 			.then(condition => {
 				if (condition) {
 					const response = {
 						'status': 'success',
 						'messages': [],
-						'condition': req.body.condition
+						'condition': req.body.condition,
+						'virusPPM': req.body.virusPPM,
+						'contaminantPPM': req.body.contaminantPPM
 					};
 					return res.status(200).json(response);	
 				} else {
@@ -619,6 +659,8 @@ module.exports.getQualityHistory = function(req, res) {
 						let obj = {
 							'condition': item.attributes.condition,
 							'conditionCode': conditionCodes[item.attributes.condition.toLowerCase()],
+							'virusPPM': item.attributes.virusPPM,
+							'contaminantPPM': item.attributes.contaminantPPM,
 							'date': item.attributes.created_at
 						};
 						return cb(null, obj);
