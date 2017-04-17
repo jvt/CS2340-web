@@ -32,54 +32,81 @@ module.exports.createSession = function(req, res) {
 		.fetch()
 		.then(function(dbUser) {
 			if (dbUser) {
-				let dbPassword = dbUser.attributes.password;
-				bcrypt.compare(req.body.password, dbPassword, function(error, result) {
-					if (error) {
-						const response = {
-							'status': 'error',
-							'messages': [
-								'An internal server error occurred'
-							]
-						};
-						return res.status(500).json(response);
-					} else {
-						if (result) {
-							if (dbUser.attributes.locked) {
-								const response = {
-									'status': 'success',
-									'auth': false,
-									'messages':[
-										'User account has been locked'
-									]
-								};
-								return res.json(response);
-							} else {
-								const response = {
-									'status': 'success',
-									'auth': true,
-									'messages':[],
-									'userData': {
-										'id': dbUser.attributes.id,
-										'authToken': dbUser.attributes.token,
-										'username': dbUser.attributes.username,
-										'role': dbUser.attributes.role,
-										'created_at': dbUser.attributes.created_at
-									}
-								};
-								return res.json(response);
-							}
-						} else {
+				if (dbUser.attributes.locked) {
+					const response = {
+						'status': 'success',
+						'auth': false,
+						'messages':[
+							'User account has been locked'
+						]
+					};
+					return res.json(response);
+				} else {
+					let dbPassword = dbUser.attributes.password;
+					bcrypt.compare(req.body.password, dbPassword, function(error, result) {
+						if (error) {
 							const response = {
-								'status': 'success',
-								'auth': false,
+								'status': 'error',
 								'messages': [
-									'Invalid username or password'
+									'An internal server error occurred'
 								]
 							};
-							return res.json(response);
+							return res.status(500).json(response);
+						} else {
+							if (result) {
+								dbUser.save({
+									attempts: 0	
+								}, {patch: true})
+								.then(() => {
+									const response = {
+										'status': 'success',
+										'auth': true,
+										'messages':[],
+										'userData': {
+											'id': dbUser.attributes.id,
+											'authToken': dbUser.attributes.token,
+											'username': dbUser.attributes.username,
+											'role': dbUser.attributes.role,
+											'created_at': dbUser.attributes.created_at
+										}
+									};
+									return res.json(response);
+								});
+							} else {
+								if (dbUser.attributes.attempts >= 2) {
+									dbUser.save({
+										attempts: dbUser.attributes.attempts + 1,
+										locked: true
+									}, {patch: true})
+									.then(() => {
+										const response = {
+											'status': 'success',
+											'auth': false,
+											'messages': [
+												'Too many login attempts'
+											]
+										};
+										return res.json(response);
+									});
+								} else {
+									dbUser.save({
+										attempts: dbUser.attributes.attempts + 1	
+									}, {patch: true})
+									.then(() => {
+										const response = {
+											'status': 'success',
+											'auth': false,
+											'messages': [
+												'Invalid username or password'
+											]
+										};
+										return res.json(response);
+									});
+								}
+							}
 						}
-					}
-				});
+					});
+				}
 			} else {
 				const response = {
 					'status': 'error',
