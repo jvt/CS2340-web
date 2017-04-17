@@ -1,0 +1,120 @@
+<div class="row">
+	<div class="col s12 m12">
+		<div class="card white">
+			<div class="card-content blue-text center-align">
+				<span class="card-title blue-text center-align">View Report</span>
+				<div class="row left-align">
+					<div class="col m2 right-align">
+						<p class="grey-text text-darken-2">Type:</p>
+					</div>
+					<div class="col m4">
+						<p>{{ report.type }}</p>
+					</div>
+					<div class="col m2 right-align">
+						<p class="grey-text text-darken-2">Condition:</p>
+					</div>
+					<div class="col m4">
+					<p>{{ report.condition }}</p>
+					</div>
+				</div>
+				<div class="row left-align">
+					<div class="col m2 right-align">
+						<p class="grey-text text-darken-2">Quality Reports:</p>
+					</div>
+					<div class="col m4">
+						<p>{{ report.qualityReports }}</p>
+					</div>
+					<div class="col m2 right-align">
+						<p class="grey-text text-darken-2">Reported By:</p>
+					</div>
+					<div class="col m4">
+					<p>{{ report.reporter }}</p>
+					</div>
+				</div>
+				<div class="row left-align">
+					<div class="col m2 right-align">
+						<p class="grey-text text-darken-2">Latitude:</p>
+					</div>
+					<div class="col m4">
+						<p>{{ report.latitude }}</p>
+					</div>
+					<div class="col m2 right-align">
+						<p class="grey-text text-darken-2">Longitude:</p>
+					</div>
+					<div class="col m4">
+					<p>{{ report.longitude }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12 m12">
+		<div class="card white">
+			<div class="card-content blue-text">
+				<div id="map" style="height: 600px;"></div>
+				<script>
+					var map;
+					var loc = {
+						lat: {{ report.latitude }},
+						lng: {{ report.longitude }}
+					};
+					function initMap() {
+						map = new google.maps.Map(document.getElementById('map'), {
+							center: loc,
+							zoom: 12
+						});
+
+						map.addListener('dragend', function() {
+							loadReports();
+						});
+
+						loadReports();
+					}
+
+					function loadReports() {
+						var queryParams = '?lat=' + loc.lat + '&long=' + loc.lng;
+						$.ajax({
+							url: '/api/reports/location' + queryParams,
+							success: function(body) {
+								if (body.status === 'success') {
+									for (var i = 0; i < body.reports.length; i++) {
+										var report = body.reports[i];
+										new google.maps.Marker({
+											position: {
+												lat: Number(report.latitude),
+												lng: Number(report.longitude)
+											},
+											map: map
+										});
+									}
+								} else {
+									console.error('An unexpected error has occurred loading reports');
+									alert('An unexpected error has occurred loading reports');
+								}
+							},
+							error: function(body) {
+								console.error(body);
+								alert('An unexpected error has occurred loading reports');
+							}
+						});
+					}
+				</script>
+				<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1nBw64laQoFbrEcjNvm-mLcSCZtSi2BI&callback=initMap" async defer></script>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12 m12">
+		<div class="card white">
+			<div class="card-content blue-text center-align">
+				<span class="card-title blue-text center-align">Quality History</span>
+				<script src="https://d3js.org/d3.v4.min.js"></script>
+				<div class="row">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
