@@ -49,6 +49,13 @@ app.use(session({
 
 app.use(flash());
 
+hbs.registerHelper('ifAdmin', function(userObject, options) {
+    if (userObject && userObject.role === 3) {
+        return options.fn(this);
+    }
+    return options.inverse(this);
+});
+
 let controllers = require('./controllers/');
 require("./routes.js")(app, controllers);
 
