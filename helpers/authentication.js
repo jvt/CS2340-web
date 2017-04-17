@@ -25,3 +25,12 @@ module.exports.isNotAuthenticated = function(req, res, next) {
 		return res.redirect('back');
 	}
 }
+
+module.exports.admin = function(req, res, next) {
+	if (req.session.user.role === 3) {
+		return next();
+	} else {
+		req.flash('error', 'You are not allowed to view that page.');
+		return res.redirect('back');
+	}
+}
