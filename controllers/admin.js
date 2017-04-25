@@ -1,9 +1,21 @@
 const User = require('../models/user').model;
+const async = require('async');
 
 module.exports.index = function(req, res) {
-	return res.render('admin/dashboard', {
-		title: 'CS2340 :: Admin Panel',
-		user: req.session.user
+	async.parallel({
+		users: done => {
+			new User()
+				.fetchAll()
+				.then(users => {
+					return done(null, users.models.length);
+				});
+		}
+	}, (err, results) => {
+		return res.render('admin/dashboard', {
+			title: 'CS2340 :: Admin Panel',
+			user: req.session.user,
+			data: results
+		});
 	});
 }
 
