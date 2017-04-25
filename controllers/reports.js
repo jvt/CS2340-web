@@ -66,7 +66,8 @@ module.exports.show = function(req, res) {
 					return res.render('reports/show', {
 						title: 'CS2340 :: View Report',
 						user: req.session.user,
-						report: report.attributes
+						report: report.attributes,
+						qualityReports: report.qualities()
 					});
 				});
 				

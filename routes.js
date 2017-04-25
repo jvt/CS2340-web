@@ -14,7 +14,7 @@ module.exports = function(app, c) {
 	app.post('/api/user', c.api.createUser);
 	app.post('/api/user/update', c.api.updateUser);
 
-	app.use(csrf());
+	// app.use(csrf());
 
 	app.get('/', [auth.isAuthenticated], c.index.index);
 	app.get('/reports/create', [auth.isAuthenticated], c.reports.create);
@@ -22,6 +22,10 @@ module.exports = function(app, c) {
 	app.get('/reports/:id', [auth.isAuthenticated], c.reports.show);
 
 	app.get('/admin', [auth.isAuthenticated, auth.admin], c.admin.index);
+	app.get('/admin/users', [auth.isAuthenticated, auth.admin], c.admin.index);
+	app.get('/admin/users/banned', [auth.isAuthenticated, auth.admin], c.admin.banned);
+	app.get('/admin/qualityReports', [auth.isAuthenticated, auth.admin], c.admin.index);
+	app.get('/admin/waterReports', [auth.isAuthenticated, auth.admin], c.admin.index);
 
 	app.get('/login', [auth.isNotAuthenticated], c.session.login);
 	app.get('/register', [auth.isNotAuthenticated], c.session.register);
