@@ -3,13 +3,15 @@ const bcrypt = require('bcrypt');
 
 module.exports.login = function(req, res) {
 	return res.render('session/login', {
-		title: 'Login'
+		title: 'Login',
+		_csrf: req.csrfToken()
 	});
 }
 
 module.exports.register = function(req, res) {
 	return res.render('session/register', {
-		title: 'Register'
+		title: 'Register',
+		_csrf: req.csrfToken()
 	});
 }
 

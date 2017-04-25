@@ -37,7 +37,7 @@ var RedisStore = require('connect-redis')(session);
 app.use(session({
 	cookie: {
 		maxAge: 5009600,
-		domain: process.env.NODE_ENV == 'production' ? 'cs2340.joetorraca.com' : 'localhost'
+		domain: process.env.NODE_ENV == 'production' ? 'water.joetorraca.com' : 'localhost'
 	},
 	secret: config.get('session').secret,
 	resave: false,

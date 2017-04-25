@@ -14,7 +14,7 @@ module.exports = function(app, c) {
 	app.post('/api/user', c.api.createUser);
 	app.post('/api/user/update', c.api.updateUser);
 
-	// app.use(csrf());
+	app.use(csrf());
 
 	app.get('/', [auth.isAuthenticated], c.index.index);
 	app.get('/reports/create', [auth.isAuthenticated], c.reports.create);
