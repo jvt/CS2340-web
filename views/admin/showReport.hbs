@@ -1,0 +1,47 @@
+<div class="row">
+	<div class="col s12">
+		<div class="card white">
+			<div class="card-content">
+				<span class="card-title grey-text text-darken-3">Report #{{ report.attributes.id }}</span>
+				<p class="grey-text text-darken-3">Latitude: {{ report.attributes.latitude }}</p>
+				<p class="grey-text text-darken-3">Latitude: {{ report.attributes.latitude }}</p>
+				<p class="grey-text text-darken-3">Submitted by: <a href="/admin/users/{{ submitter.attributes.id }}" title="View User">{{ submitter.attributes.username }}</a></p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12">
+		<div class="card white">
+			<div class="card-content">
+				<span class="card-title grey-text text-darken-3">Quality Reports</span>
+				{{#if qualities}}
+					<div class="row">
+						<div class="col m5">Condition</div>
+						<div class="col m2">Virus PPM</div>
+						<div class="col m2">Contaminant PPM</div>
+						<div class="col m3">Created</div>
+					</div>
+					{{#qualities}}
+					<div class="row">
+						<div class="col m5">{{ this.attributes.condition }}</div>
+						{{#if this.attributes.virusPPM}}
+						<div class="col m2">{{ this.attributes.virusPPM }}</div>
+						{{else}}
+						<div class="col m2"><i>Not Marked</i></div>
+						{{/if}}
+						{{#if this.attributes.contaminantPPM }}
+						<div class="col m2">{{ this.attributes.contaminantPPM }}</div>
+						{{else}}
+						<div class="col m2"><i>Not Marked</i></div>
+						{{/if}}
+						<div class="col m3">{{ this.attributes.created_at }}</div>
+					</div>
+					{{/qualities}}
+				{{ else }}
+				<p class="grey-text text-darken-3 center-align">There are no quality reports for this water report</p>
+				{{/if}}
+			</div>
+		</div>
+	</div>
+</div>

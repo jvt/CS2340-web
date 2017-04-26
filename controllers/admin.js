@@ -230,3 +230,45 @@ module.exports.reports = function(req, res) {
 			});
 		});
 }
+
+module.exports.showReport = function(req, res) {
+	if (!req.params.id) {
+		req.flash('error', 'No report with that ID exists');
+		return res.redirect('back');
+	}
+
+	new Report()
+		.query(qb => {
+			qb.where('id', req.params.id);
+			qb.limit(1);
+		})
+		.fetch()
+		.then(report => {
+			if (!report) {
+				req.flash('error', 'No report with that ID exists');
+				return res.redirect('back');
+			}
+			new User()
+				.query(qb => {
+					qb.where('id', report.attributes.userID);
+				})
+				.fetch()
+				.then(submitter => {
+					new Quality()
+						.query(qb => {
+							qb.where('report', report.attributes.id);
+							qb.orderBy('created_at', 'DESC');
+						})
+						.fetchAll()
+						.then(qualities => {
+							return res.render('admin/showReport', {
+								title: 'CS2340 :: View Report',
+								report: report,
+								qualities: qualities.models,
+								submitter: submitter,
+								user: req.session.user
+							});
+						});
+				});
+		});
+}
