@@ -77,7 +77,7 @@ module.exports.getUser = function(req, res) {
 		.then(user => {
 			return res.render('admin/showUser', {
 				title: 'CS2340 :: Show User',
-				data: user.attributes,
+				data: user,
 				user: req.session.user
 			});
 		});
