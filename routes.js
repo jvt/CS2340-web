@@ -34,6 +34,8 @@ module.exports = function(app, c) {
 	app.get('/admin/users/:id/delete', [auth.isAuthenticated, auth.admin], c.admin.deleteUser);
 	app.get('/admin/users/:id/edit', [auth.isAuthenticated, auth.admin], c.admin.editUser);
 	app.post('/admin/users/:id/edit', [auth.isAuthenticated, auth.admin], c.admin.saveEditUser);
+	app.get('/admin/users/:id/ban', [auth.isAuthenticated, auth.admin], c.admin.banUser);
+	app.get('/admin/users/:id/unban', [auth.isAuthenticated, auth.admin], c.admin.unbanUser);
 
 	app.get('/login', [auth.isNotAuthenticated], c.session.login);
 	app.get('/register', [auth.isNotAuthenticated], c.session.register);

@@ -109,6 +109,52 @@ module.exports.banned = function(req, res) {
 		});
 }
 
+module.exports.banUser = function(req, res) {
+	new User()
+		.query(qb => {
+			qb.where('id', req.params.id);
+			qb.limit(1);
+		})
+		.fetch()
+		.then(user => {
+			if (!user) {
+				req.flash('error', 'That user does not exist');
+				return res.redirect('back');
+			}
+
+			user.save({
+				locked: true
+			}, {patch: true})
+			.then(locked => {
+				req.flash('success', 'That user has been successfully banned');
+				return res.redirect('back');
+			});
+		});
+}
+
+module.exports.unbanUser = function(req, res) {
+	new User()
+		.query(qb => {
+			qb.where('id', req.params.id);
+			qb.limit(1);
+		})
+		.fetch()
+		.then(user => {
+			if (!user) {
+				req.flash('error', 'That user does not exist');
+				return res.redirect('back');
+			}
+
+			user.save({
+				locked: false
+			}, {patch: true})
+			.then(locked => {
+				req.flash('success', 'That user has been successfully unbanned');
+				return res.redirect('back');
+			});
+		});
+}
+
 module.exports.deleteUser = function(req, res) {
 	new User()
 		.query(qb => {

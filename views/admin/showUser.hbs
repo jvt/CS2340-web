@@ -3,6 +3,21 @@
 		<div class="card white">
 			<div class="card-content">
 				<span class="card-title grey-text text-darken-3">User: <b>{{ data.attributes.username }}</b></span>
+				{{#if data.attributes.locked}}
+				<p class="grey-text">Banned: <span class="red-text">Yes</span></p>
+				{{ else }}
+				<p class="grey-text">Banned: <span class="green-text">No</span></p>
+				{{/if}}
+				{{#if data.attributes.homeaddress}}
+				<p class="grey-text">Home Address: {{ data.attributes.homeaddress }}</p>
+				{{ else }}
+				<p class="grey-text">Home Address: <i>Unknown</i></p>
+				{{/if}}
+				{{#if data.attributes.title}}
+				<p class="grey-text">Title: {{ data.attributes.title }}</p>
+				{{ else }}
+				<p class="grey-text">Title: <i>Unknown</i></p>
+				{{/if}}
 			</div>
 		</div>
 	</div>
@@ -12,11 +27,14 @@
 		<div class="card white">
 			<div class="card-content">
 				<span class="card-title grey-text text-darken-3">Actions</span>
-				<div class="container center-align">
-					<div class="row center-align">
-						<a href="/admin/users/{{ data.attributes.id }}/delete" title="Delete user" class="btn red col m5 center-align" style="margin:0 10px;">Delete</a>
-						<a href="/admin/users/{{ data.attributes.id }}/edit" title="Edit user" class="btn blue col m5 center-align" style="margin:0 10px;">Edit</a>
-					</div>
+				<div class="row center-align">
+					<a href="/admin/users/{{ data.attributes.id }}/delete" title="Delete user" class="btn red col m3 center-align" style="float:right;margin:0 10px;">Delete</a>
+					{{#if data.attributes.locked}}
+					<a href="/admin/users/{{ data.attributes.id }}/unban" title="Unban user" class="btn blue col m3 center-align" style="margin:0 10px;">Unban</a>
+					{{else}}
+					<a href="/admin/users/{{ data.attributes.id }}/ban" title="Ban user" class="btn blue col m3 center-align" style="margin:0 10px;">Ban</a>
+					{{/if}}
+					<a href="/admin/users/{{ data.attributes.id }}/edit" title="Edit user" class="btn blue col m3 center-align" style="margin:0 10px;">Edit</a>
 				</div>
 			</div>
 		</div>
