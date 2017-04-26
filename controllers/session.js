@@ -33,24 +33,52 @@ module.exports.performLogin = function(req, res) {
 			qb.limit(1);
 		})
 		.fetch()
-		.then(users => {
-			if (users) {
-				let password = users.attributes.password;
+		.then(user => {
+			if (user) {
+				let password = user.attributes.password;
 				bcrypt.compare(req.body.password, password, function(error, result) {
 					if (error) {
 						req.flash('error', 'An unexpected system error has occurred.');
 						return res.redirect('back');
 					}
 					if (!result) {
-						req.flash('error', incorrectMessage);
-						return res.redirect('back');
+						if (user.attributes.attempts >= 2) {
+							user.save({
+								attempts: user.attributes.attempts + 1,
+								locked: true
+							}, {
+								patch: true
+							})
+							.then(updated => {
+								req.flash('error', 'You have attempted to login too many times. Your account has now been locked.');
+								return res.redirect('back');
+							});
+						} else {
+							user.save({
+								attempts: user.attributes.attempts + 1
+							}, {
+								patch: true
+							})
+							.then(updated => {
+								req.flash('error', incorrectMessage);
+								return res.redirect('back');
+							});
+						}
 					} else {
-						delete users.attributes.token;
-						delete users.attributes.resetToken;
-						delete users.attributes.resetExpiration;
-						req.session.user = users.attributes;
+						delete user.attributes.token;
+						delete user.attributes.resetToken;
+						delete user.attributes.resetExpiration;
+						req.session.user = user.attributes;
 						req.session.save();
-						return res.redirect('/');
+						user.attributes.attempts = 0;
+						user.save({
+							attempts: 0
+						}, {
+							patch: true
+						})
+						.then(result => {
+							return res.redirect('/');
+						});
 					}
 				});
 			} else {
