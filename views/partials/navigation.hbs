@@ -5,9 +5,9 @@
 			{{#ifAdmin user}}
 			<li><a href="/admin" title="Admin">Admin</a></li>
 			{{/ifAdmin}}
-			{{#ifManager user}}
+			{{!-- {{#ifManager user}}
 			<li><a href="/manager" title="Manager">Manager</a></li>
-			{{/ifManager}}
+			{{/ifManager}} --}}
 			{{#unless user}}
 			<li><a href="/register">Register</a></li>
 			<li><a href="/login">Login</a></li>
