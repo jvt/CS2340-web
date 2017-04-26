@@ -104,7 +104,8 @@ module.exports.banned = function(req, res) {
 		.then(users => {
 			return res.render('admin/banned', {
 				title: 'CS2340 :: Banned Users',
-				users: users.models
+				users: users.models,
+				user: req.session.user
 			});
 		});
 }
@@ -177,10 +178,11 @@ module.exports.editUser = function(req, res) {
 			qb.where('id', req.params.id);
 		})
 		.fetch()
-		.then(user => {
+		.then(data => {
 			return res.render('admin/editUser', {
 				title: 'CS2340 :: Edit User',
-				user: user
+				user: req.session.user,
+				data: data
 			});
 		});
 }
