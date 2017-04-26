@@ -11,11 +11,15 @@
 	<div class="col s12">
 		<div class="card white">
 			<div class="card-content">
+				{{#if users}}
 				<ul class="collection">
 					{{#users}}
 					<li class="collection-item grey-text text-darken-3">{{ this.attributes.username }}</li>
 					{{/users}}
 				</ul>
+				{{else}}
+				<p class="center-align grey-text text-darken-3">There are no banned users</p>
+				{{/if}}
 			</div>
 		</div>
 	</div>
