@@ -5,6 +5,8 @@
 				<span class="card-title blue-text center-align">New Quality Report</span>
 				<div class="row center-align">
 					<form action="/reports/:id/quality" method="POST">
+						<input type="hidden" name="_csrf" value="{{_csrf}}">
+						<input type="hidden" name="report" value="{{report}}">
 						<div class="row left-align">
 							<div class="input-field col s12">
 								<input id="virusppm" name="virusppm" type="number" class="validate">

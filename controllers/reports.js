@@ -63,12 +63,20 @@ module.exports.show = function(req, res) {
 							});
 					}
 				], () => {
-					return res.render('reports/show', {
-						title: 'CS2340 :: View Report',
-						user: req.session.user,
-						report: report.attributes,
-						qualityReports: report.qualities()
-					});
+					new Quality()
+						.query(qb => {
+							qb.where('report', report.attributes.id);
+							qb.orderBy('created_at', 'DESC');
+						})
+						.fetchAll()
+						.then(qualities => {
+							return res.render('reports/show', {
+								title: 'CS2340 :: View Report',
+								user: req.session.user,
+								report: report.attributes,
+								qualityReports: qualities.models
+							});
+						});
 				});
 				
 			} else {
@@ -76,4 +84,31 @@ module.exports.show = function(req, res) {
 				return res.redirect('back');
 			}
 		});
+}
+
+module.exports.markQuality = function(req, res) {
+	return res.render('reports/quality', {
+		title: 'CS2340 :: New Quality Report',
+		report: req.params.id,
+		user: req.session.user,
+		_csrf: req.csrfToken()
+	});
+}
+
+module.exports.saveQuality = function(req, res) {
+	if (!req.body.condition) {
+		req.flash('error', 'Condition is a required input');
+		return res.redirect('back');
+	}
+
+	new Quality({
+		report: req.body.report,
+		condition: req.body.condition,
+		virusPPM: req.body.virusppm ? req.body.virusppm : null,
+		contaminantPPM: req.body.contaminantppm ? req.body.contaminantppm : null
+	}).save()
+	.then(qual => {
+		req.flash('success', 'Successfully stored that report');
+		return res.redirect('/reports/' + req.body.report);
+	});
 }

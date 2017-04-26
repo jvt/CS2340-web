@@ -49,16 +49,30 @@
 		</div>
 	</div>
 </div>
+{{#ifWorker user}}
+<div class="row">
+	<div class="col s12 m12">
+		<div class="card white">
+			<div class="card-content blue-text center-align">
+				<span class="card-title blue-text center-align">Actions</span>
+				<div class="row center-align">
+					<a href="/reports/{{ report.id }}/quality/" class="btn blue" title="New Quality Report">Mark Quality</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{/ifWorker}}
 <div class="row">
 	<div class="col s12 m12">
 		<div class="card white">
 			<div class="card-content blue-text">
-				<div id="map" style="height: 600px;"></div>
+				<div id="map" style="height: 500px;"></div>
 				<script>
 					var map;
 					var loc = {
-						lat: {{ report.latitude }},
-						lng: {{ report.longitude }}
+						lat: Number({{ report.latitude }}),
+						lng: Number({{ report.longitude }})
 					};
 					function initMap() {
 						map = new google.maps.Map(document.getElementById('map'), {
@@ -66,38 +80,12 @@
 							zoom: 12
 						});
 
-						map.addListener('dragend', function() {
-							loadReports();
-						});
-
-						loadReports();
-					}
-
-					function loadReports() {
-						var queryParams = '?lat=' + loc.lat + '&long=' + loc.lng;
-						$.ajax({
-							url: '/api/reports/location' + queryParams,
-							success: function(body) {
-								if (body.status === 'success') {
-									for (var i = 0; i < body.reports.length; i++) {
-										var report = body.reports[i];
-										new google.maps.Marker({
-											position: {
-												lat: Number(report.latitude),
-												lng: Number(report.longitude)
-											},
-											map: map
-										});
-									}
-								} else {
-									console.error('An unexpected error has occurred loading reports');
-									alert('An unexpected error has occurred loading reports');
-								}
+						new google.maps.Marker({
+							position: {
+								lat: Number({{ report.latitude }}),
+								lng: Number({{ report.longitude }})
 							},
-							error: function(body) {
-								console.error(body);
-								alert('An unexpected error has occurred loading reports');
-							}
+							map: map
 						});
 					}
 				</script>
@@ -107,15 +95,36 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col s12 m12">
+	<div class="col s12">
 		<div class="card white">
-			<div class="card-content blue-text center-align">
-				<span class="card-title blue-text center-align">Quality History</span>
-				<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
-				<div class="row">
-				{{#qualityReports}}
-				{{/qualityReports}}
-				</div>
+			<div class="card-content center-align">
+				<span class="card-title blue-text text-lighten-1">Quality Reports</span>
+				{{#if qualityReports}}
+					<div class="row left-align">
+						<div class="col m5">Condition</div>
+						<div class="col m2">Virus PPM</div>
+						<div class="col m2">Contaminant PPM</div>
+						<div class="col m3">Created</div>
+					</div>
+					{{#qualityReports}}
+					<div class="row left-align">
+						<div class="col m5">{{ this.attributes.condition }}</div>
+						{{#if this.attributes.virusPPM}}
+						<div class="col m2">{{ this.attributes.virusPPM }}</div>
+						{{else}}
+						<div class="col m2"><i>Not Marked</i></div>
+						{{/if}}
+						{{#if this.attributes.contaminantPPM }}
+						<div class="col m2">{{ this.attributes.contaminantPPM }}</div>
+						{{else}}
+						<div class="col m2"><i>Not Marked</i></div>
+						{{/if}}
+						<div class="col m3">{{ this.attributes.created_at }}</div>
+					</div>
+					{{/qualityReports}}
+				{{ else }}
+				<p class="grey-text text-darken-3 center-align">There are no quality reports for this water report</p>
+				{{/if}}
 			</div>
 		</div>
 	</div>

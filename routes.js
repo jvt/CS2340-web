@@ -24,6 +24,8 @@ module.exports = function(app, c) {
 	app.get('/reports/create', [auth.isAuthenticated], c.reports.create);
 	app.post('/reports/create', [auth.isAuthenticated], c.reports.store);
 	app.get('/reports/:id', [auth.isAuthenticated], c.reports.show);
+	app.get('/reports/:id/quality', [auth.isAuthenticated, auth.worker], c.reports.markQuality);
+	app.post('/reports/:id/quality', [auth.isAuthenticated, auth.worker], c.reports.saveQuality);
 
 	app.get('/admin', [auth.isAuthenticated, auth.admin], c.admin.index);
 	app.get('/admin/users', [auth.isAuthenticated, auth.admin], c.admin.users);
