@@ -7,7 +7,7 @@ exports.model = bookshelf.Model.extend({
   hasTimestamps: true,
   user: function()
   {
-  	return this.hasOne(User);
+  	return this.belongsTo(User);
   },
   qualities: function()
   {
