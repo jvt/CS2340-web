@@ -220,5 +220,13 @@ module.exports.saveEditUser = function(req, res) {
 }
 
 module.exports.reports = function(req, res) {
-
+	new Report()
+		.fetchAll()
+		.then(reports => {
+			return res.render('admin/reports', {
+				title: 'CS2340 :: Reports',
+				reports: reports.models,
+				user: req.session.user
+			});
+		});
 }
