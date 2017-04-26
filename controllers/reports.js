@@ -37,7 +37,7 @@ module.exports.show = function(req, res) {
 							})
 							.fetchAll()
 							.then(conditions => {
-								if (conditions) {
+								if (conditions.models.length > 0) {
 									report.attributes.condition = conditions.models[0].attributes.condition;
 								} else {
 									report.attributes.condition = 'Unknown';
