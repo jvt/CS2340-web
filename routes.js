@@ -30,7 +30,7 @@ module.exports = function(app, c) {
 	app.get('/admin/users/banned', [auth.isAuthenticated, auth.admin], c.admin.banned);
 	app.get('/admin/users/:id', [auth.isAuthenticated, auth.admin], c.admin.getUser);
 	app.get('/admin/qualityReports', [auth.isAuthenticated, auth.admin], c.admin.index);
-	app.get('/admin/waterReports', [auth.isAuthenticated, auth.admin], c.admin.index);
+	app.get('/admin/reports', [auth.isAuthenticated, auth.admin], c.admin.reports);
 	app.get('/admin/users/:id/delete', [auth.isAuthenticated, auth.admin], c.admin.deleteUser);
 	app.get('/admin/users/:id/edit', [auth.isAuthenticated, auth.admin], c.admin.editUser);
 	app.post('/admin/users/:id/edit', [auth.isAuthenticated, auth.admin], c.admin.saveEditUser);

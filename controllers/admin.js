@@ -179,14 +179,46 @@ module.exports.editUser = function(req, res) {
 		})
 		.fetch()
 		.then(data => {
+			let roles = [false, false, false, false];
+			roles[Number(data.attributes.role)] = true;
 			return res.render('admin/editUser', {
 				title: 'CS2340 :: Edit User',
 				user: req.session.user,
-				data: data
+				data: data,
+				roles: roles,
+				_csrf: req.csrfToken()
 			});
 		});
 }
 
 module.exports.saveEditUser = function(req, res) {
+	if (!req.body.username) {
+		req.flash('error', 'Username is a required input');
+		return res.redirect('back');
+	}
+	if (!req.body.role) {
+		req.flash('error', 'Role is a required input');
+		return res.redirect('back');
+	}
+	new User()
+		.query(qb => {
+			qb.where('id', req.params.id);
+		})
+		.fetch()
+		.then(data => {
+			data.save({
+				username: req.body.username,
+				title: req.body.title,
+				homeaddress: req.body.homeaddress,
+				role: req.body.role
+			}, {patch: true})
+			.then(done => {
+				req.flash('success', 'That user has been successfully updated');
+				return res.redirect('/admin/users/' + data.attributes.id);
+			});
+		});
+}
+
+module.exports.reports = function(req, res) {
 
 }
