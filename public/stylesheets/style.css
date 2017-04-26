@@ -10,3 +10,7 @@ nav {
 tr.clickable-row:hover {
 	cursor: pointer;
 }
+
+.center-align {
+	text-align: center !important;
+}

@@ -7,3 +7,36 @@
 		</div>
 	</div>
 </div>
+<div class="row">
+	<div class="col s12">
+		<div class="card white">
+			<div class="card-content">
+				<span class="card-title grey-text text-darken-3">Actions</span>
+				<div class="container center-align">
+					<div class="row center-align">
+						<a href="/admin/users/{{ data.attributes.id }}/delete" title="Delete user" class="btn red col m5 center-align" style="margin:0 10px;">Delete</a>
+						<a href="/admin/users/{{ data.attributes.id }}/edit" title="Edit user" class="btn blue col m5 center-align" style="margin:0 10px;">Edit</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12">
+		<div class="card white">
+			<div class="card-content">
+				<span class="card-title grey-text text-darken-3">Reports Submitted</b></span>
+				{{#if reports}}
+				<div class="collection">
+					{{#reports}}
+					<a href="/admin/reports/{{ this.attributes.id }}/" class="collection-item blue-text">Report #{{ this.attributes.id }}</a>
+					{{/reports}}
+				</div>
+				{{else}}
+				<p class="grey-text text-darken-2 center-align">This user has not submitted any water reports</p>
+				{{/if}}
+			</div>
+		</div>
+	</div>
+</div>

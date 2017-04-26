@@ -75,11 +75,23 @@ module.exports.getUser = function(req, res) {
 		})
 		.fetch()
 		.then(user => {
-			return res.render('admin/showUser', {
-				title: 'CS2340 :: Show User',
-				data: user,
-				user: req.session.user
-			});
+			if (!user) {
+				req.flash('error', 'That user does not exist');
+				return res.redirect('back');
+			}
+			new Report()
+				.query(qb => {
+					qb.where('userID', user.attributes.id);
+				})
+				.fetchAll()
+				.then(reports => {
+					return res.render('admin/showUser', {
+						title: 'CS2340 :: Show User',
+						data: user,
+						user: req.session.user,
+						reports: reports.models
+					});
+				});
 		});
 }
 
@@ -95,4 +107,38 @@ module.exports.banned = function(req, res) {
 				users: users.models
 			});
 		});
+}
+
+module.exports.deleteUser = function(req, res) {
+	new User()
+		.query(qb => {
+			qb.where('id', req.params.id);
+			qb.limit(1);
+		})
+		.fetch()
+		.then(user => {
+			user.destroy()
+			.then(deleted => {
+				req.flash('success', 'That user account has been successfully deleted.')
+				return res.redirect('/admin/users');
+			});
+		});
+}
+
+module.exports.editUser = function(req, res) {
+	new User()
+		.query(qb => {
+			qb.where('id', req.params.id);
+		})
+		.fetch()
+		.then(user => {
+			return res.render('admin/editUser', {
+				title: 'CS2340 :: Edit User',
+				user: user
+			});
+		});
+}
+
+module.exports.saveEditUser = function(req, res) {
+
 }
