@@ -701,3 +701,39 @@ module.exports.getQualityHistory = function(req, res) {
 				});
 		})
 }
+
+module.exports.getAllUsers = function(req, res)
+{
+	new User()
+		.fetchAll()
+		.then(users => {
+			if (!users) {
+				const response = {
+					'status': 'error',
+					'messages': [
+						'No users in the database'
+					],
+					'users': []
+				};
+				return res.status(200).json(response);
+			} else {
+				async.map(users.models, (item, cb) => {
+					let o = {
+						'id': item.attributes.id,
+						'username': item.attributes.username,
+						'homeaddress': item.attributes.homeaddress,
+						'title': item.attributes.title,
+						'role': item.attributes.role,
+						'locked': item.attributes.locked
+					};
+					return cb(null, o);
+				}, (err, results) => {
+					const response = {
+						'status': 'success',
+						'users': results
+					};
+					return res.status(200).json(response);
+				});
+			}
+		});
+}
