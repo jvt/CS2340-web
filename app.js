@@ -63,6 +63,13 @@ hbs.registerHelper('ifManager', function(userObject, options) {
     return options.inverse(this);
 });
 
+hbs.registerHelper('ifWorker', function(userObject, options) {
+    if (userObject && userObject.role >= 1) {
+        return options.fn(this);
+    }
+    return options.inverse(this);
+});
+
 let controllers = require('./controllers/');
 require("./routes.js")(app, controllers);
 
