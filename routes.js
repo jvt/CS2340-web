@@ -12,6 +12,9 @@ module.exports = function(app, c) {
 	app.get('/api/reports/:id/history', c.api.getQualityHistory);
 	app.get('/api/user/', c.api.getAllUsers);
 	app.get('/api/user/:id', c.api.getUser);
+	app.get('/api/user/:id/ban', c.api.banUser);
+	app.get('/api/user/:id/unban', c.api.unbanUser);
+	app.get('/api/user/:id/delete', c.api.deleteUser);
 	app.post('/api/user', c.api.createUser);
 	app.post('/api/user/update', c.api.updateUser);
 

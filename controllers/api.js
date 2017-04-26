@@ -824,3 +824,44 @@ module.exports.unbanUser = function(req, res) {
 			})
 		});
 }
+
+module.exports.deleteUser = function(req, res) {
+	if (!req.params.id) {
+		const response = {
+			'status': 'error',
+			'messages': [
+				'An ID parameter is required'
+			]
+		};
+		return res.status(500).json(response);
+	}
+
+	new User()
+		.query(qb => {
+			qb.where('id', req.params.id);
+			qb.limit(1);
+		})
+		.fetch()
+		.then(user => {
+			if (!user) {
+				const response = {
+					'status': 'error',
+					'messages': [
+						'User with that ID does not exist'
+					]
+				};
+				return res.status(500).json(response);
+			}
+
+			user.destroy()
+				.then(deleted => {
+					const response = {
+						'status': 'success',
+						'messages': [
+							'That user has been deleted'
+						]
+					};
+					return res.status(200).json(response);
+				});
+		});
+}
