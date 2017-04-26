@@ -4,8 +4,60 @@
 			<div class="card-content">
 				<span class="card-title grey-text text-darken-3">Report #{{ report.attributes.id }}</span>
 				<p class="grey-text text-darken-3">Latitude: {{ report.attributes.latitude }}</p>
-				<p class="grey-text text-darken-3">Latitude: {{ report.attributes.latitude }}</p>
+				<p class="grey-text text-darken-3">Longitude: {{ report.attributes.longitude }}</p>
 				<p class="grey-text text-darken-3">Submitted by: <a href="/admin/users/{{ submitter.attributes.id }}" title="View User">{{ submitter.attributes.username }}</a></p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col s12 m12">
+		<div class="card white">
+			<div class="card-content blue-text">
+				<div id="map" style="height: 500px;"></div>
+				<script>
+					var map;
+					var loc = {
+						lat: Number({{ report.attributes.latitude }}),
+						lng: Number({{ report.attributes.longitude }})
+					};
+					function initMap() {
+						map = new google.maps.Map(document.getElementById('map'), {
+							center: loc,
+							zoom: 12
+						});
+
+						new google.maps.Marker({
+							position: {
+								lat: Number({{ report.attributes.latitude }}),
+								lng: Number({{ report.attributes.longitude }})
+							},
+							map: map
+						});
+					}
+
+					function generateReportHTML(reports) {
+						$('.card-content .reportsContainer > .preloader-wrapper').hide();
+						$('.card-content .reportsContainer > .data-container').show();
+						let $body = $('.card-content .reportsContainer > .data-container table tbody');
+						$body.html('');
+						for (var i = 0; i < reports.length; i++) {
+							var report = reports[i];
+							var row = '<tr class="clickable-row" data-href="/reports/[[id]]/"><td>[[id]]</td><td>[[type]]</td><td>[[condition]]</td><td>[[latitude]]</td><td>[[longitude]]</td></tr>';
+							row = row.replace('[[id]]', report.id);
+							row = row.replace('[[id]]', report.id);
+							row = row.replace('[[type]]', report.type);
+							row = row.replace('[[condition]]', report.condition);
+							row = row.replace('[[latitude]]', report.latitude);
+							row = row.replace('[[longitude]]', report.longitude);
+							$body.append(row);
+						}
+						$('.clickable-row').on('click', function() {
+							window.location = $(this).data('href');
+						});
+					}
+				</script>
+				<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1nBw64laQoFbrEcjNvm-mLcSCZtSi2BI&callback=initMap" async defer></script>
 			</div>
 		</div>
 	</div>
